@@ -11,17 +11,17 @@ public class LinkController : ControllerBase
   private static Dictionary<string, string> Links = new Dictionary<string, string>();
 
   [HttpPost("set")]
-  public IActionResult Shorten(string link)
+  public IActionResult Shorten([FromForm] string link)
   {
-    string shortened = GenerateRandomString(link, 4);
+    string shortened = GenerateRandomString(4);
     Links.Add(shortened, link);
     return Ok(shortened);
   }
 
-  private string GenerateRandomString(string s, int length)
+  private string GenerateRandomString(int length)
   {
     StringBuilder builder;
-    Random r = new Random(s.GetHashCode());
+    Random r = new Random();
     do
     {
       builder = new StringBuilder(length);

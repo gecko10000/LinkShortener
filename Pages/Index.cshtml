@@ -1,4 +1,13 @@
 @page
-
 <h1>Gecko's Link Shortener</h1>
+<div>
+  <form id="linkForm">
+    <label for="link">Link:</label>
+    <input type="text" required id="link" name="link" value="">
+    <input type="submit" value="Shorten">
+  </form>
+  <a id="shortened" style="visibility:hidden;" target="_blank"></a>
+</div>
+<script src="~/libs/jquery.js"></script>
+<script src="~/js/index.js"></script>
 <!--<h2>The time on the server is @DateTime.Now</h2>-->
