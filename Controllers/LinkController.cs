@@ -9,8 +9,6 @@ namespace LinkShortener.Controllers;
 public class LinkController : ControllerBase
 {
 
-  private static Dictionary<string, string> Links = new Dictionary<string, string>();
-
   private SQLiteConnection openConnection()
   {
     new DirectoryInfo("data").Create();
@@ -22,11 +20,19 @@ public class LinkController : ControllerBase
     return connection;
   }
 
-  private string? GetExisting(SQLiteConnection c, string l)
+  private string? GetExistingShort(SQLiteConnection c, string l)
   {
     using var command = new SQLiteCommand(c);
     command.CommandText = @"SELECT short FROM links WHERE long=@long;";
     command.Parameters.AddWithValue("@long", l);
+    return (string?) command.ExecuteScalar();
+  }
+
+  private string? GetExistingLong(SQLiteConnection c, string s)
+  {
+    using var command = new SQLiteCommand(c);
+    command.CommandText = @"SELECT long FROM links WHERE short=@short;";
+    command.Parameters.AddWithValue("@short", s);
     return (string?) command.ExecuteScalar();
   }
 
@@ -54,7 +60,7 @@ public class LinkController : ControllerBase
     using var command = new SQLiteCommand(connection);
 
     // Get existing first
-    string? existing = GetExisting(connection, link);
+    string? existing = GetExistingShort(connection, link);
     if (existing is not null)
     {
       return Ok(existing);
@@ -90,6 +96,8 @@ public class LinkController : ControllerBase
   [HttpGet("{link}")]
   public IActionResult ProcessLink(string link)
   {
-    return Links.TryGetValue(link, out string? v) ? Redirect(v) : BadRequest("This link does not exist.");
+    using var connection = openConnection();
+    string? l = GetExistingLong(connection, link);
+    return l is null ? BadRequest("This link does not exist.") : Redirect(l);
   }
 }
