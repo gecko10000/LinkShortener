@@ -1,0 +1,12 @@
+body {
+  background-color: #111111;
+}
+
+label, h1 {
+  color: white;
+}
+
+input {
+  background-color: #111111;
+  color: white;
+}
