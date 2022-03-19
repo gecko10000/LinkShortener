@@ -2,11 +2,42 @@ body {
   background-color: #111111;
 }
 
-label, h1 {
+label, h2 {
   color: white;
 }
 
 input {
   background-color: #111111;
   color: white;
+}
+
+.undercover {
+  visibility: hidden;
+  display: none;
+}
+
+.submit {
+  cursor: pointer;
+  background-color: #222222;
+  border-color: #222222;
+}
+
+.submit:hover {
+  border-color: white;
+}
+
+.link-button {
+  align-items: center;
+  background-color: #222222;
+  border-color: #222222;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  visibility: hidden;
+}
+
+.link-button:hover {
+  border-color: white;
 }

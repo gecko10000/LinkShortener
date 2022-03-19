@@ -10,6 +10,7 @@ form.submit(function (e) {
       show(output);
       link = "https://" + window.location.host + "/" + data;
       output.innerHTML = link;
+      document.getElementById("forCopy").value = link;
       output.setAttribute("href", link);
     }
   })
@@ -17,4 +18,13 @@ form.submit(function (e) {
 
 function show(el) {
   el.style.visibility = "visible";
+}
+
+function copyToClipboard() {
+  var text = document.getElementById("forCopy");
+  text.select();
+  text.setSelectionRange(0, 99);
+
+  navigator.clipboard.writeText(text.value);
+  console.log(text.value);
 }

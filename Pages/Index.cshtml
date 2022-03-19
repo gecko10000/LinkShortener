@@ -1,13 +1,16 @@
 @page
-<h1>Gecko's Link Shortener</h1>
+<link rel="stylesheet" href="~/css/index.css">
+<body>
+<h2>Gecko's Link Shortener</h2>
 <div>
   <form id="linkForm">
     <label for="link">Link:</label>
     <input type="text" required id="link" name="link" value="">
-    <input type="submit" value="Shorten">
+    <input type="submit" class="submit" value="Shorten">
   </form>
-  <a id="shortened" style="visibility:hidden;" target="_blank"></a>
+  <input type="text" id="forCopy" class="undercover"></input>
+  <button class="link-button" id="shortened" onclick="copyToClipboard()"><span class="tooltiptext">T</span></button>
 </div>
 <script src="~/libs/jquery.js"></script>
 <script src="~/js/index.js"></script>
-<!--<h2>The time on the server is @DateTime.Now</h2>-->
+</body>
