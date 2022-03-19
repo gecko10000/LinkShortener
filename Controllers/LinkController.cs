@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Data.SQLite;
+using System.Text.RegularExpressions;
 
 namespace LinkShortener.Controllers;
 
@@ -53,9 +54,17 @@ public class LinkController : ControllerBase
     command.ExecuteNonQuery();
   }
 
+  private static readonly Regex REGEX = new Regex(@"(https?:\/\/)?(\S+)", RegexOptions.Compiled);
+
+  private string CleanLink(string link)
+  {
+    return REGEX.Match(link).Groups[2].Value;
+  }
+
   [HttpPost("set")]
   public IActionResult Shorten([FromForm] string link)
   {
+    link = CleanLink(link);
     using var connection = openConnection();
     using var command = new SQLiteCommand(connection);
 
@@ -98,6 +107,6 @@ public class LinkController : ControllerBase
   {
     using var connection = openConnection();
     string? l = GetExistingLong(connection, link);
-    return l is null ? BadRequest("This link does not exist.") : Redirect(l);
+    return l is null ? BadRequest("This link does not exist.") : Redirect("http://" + l);
   }
 }
