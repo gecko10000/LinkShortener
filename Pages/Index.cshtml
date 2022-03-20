@@ -5,11 +5,11 @@
 <div>
   <form id="linkForm">
     <label for="link">Link:</label>
-    <input type="text" required id="link" name="link" value="">
+    <input type="text" required id="link" name="link" autocomplete="off">
     <input type="submit" class="submit" value="Shorten">
   </form>
   <input type="text" id="forCopy" class="undercover"></input>
-  <button class="link-button" id="shortened" onclick="copyToClipboard()"><span class="tooltiptext">T</span></button>
+  <button class="link-button" id="shortened" onclick="copyToClipboard()"></button>
 </div>
 <script src="~/libs/jquery.js"></script>
 <script src="~/js/index.js"></script>
