@@ -95,6 +95,7 @@ public class LinkController : ControllerBase
     return builder.ToString();
   }
 
+  // no I, l, O, or 0
   private const string chars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 
   private char RandomChar(Random r)
