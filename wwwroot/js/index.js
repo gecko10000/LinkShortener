@@ -6,6 +6,7 @@ form.submit(function (e) {
     url: "/set",
     data: form.serialize(),
     success: function(data) {
+      show(document.getElementById("button"));
       var output = document.getElementById("shortened");
       show(output);
       link = "https://" + window.location.host + "/" + data;
