@@ -16,7 +16,7 @@ public class LinkController : ControllerBase
     var connection = new SQLiteConnection(@"URI=file:data/links.db");
     connection.Open();
     using var command = new SQLiteCommand(connection);
-    command.CommandText = @"CREATE TABLE IF NOT EXISTS links (long TEXT UNIQUE, short TEXT UNIQUE, visits INT);";
+    command.CommandText = @"CREATE TABLE IF NOT EXISTS links (long TEXT UNIQUE, short TEXT UNIQUE, visits INT, ip TEXT);";
     command.ExecuteNonQuery();
     return connection;
   }
@@ -61,12 +61,13 @@ public class LinkController : ControllerBase
     return (int) command.ExecuteScalar();
   }
 
-  private void Insert(SQLiteConnection c, string l, string s)
+  private void Insert(SQLiteConnection c, string l, string s, string ip)
   {
     using var command = new SQLiteCommand(c);
-    command.CommandText = @"INSERT INTO links(long, short, visits) VALUES(@long, @short, 0);";
+    command.CommandText = @"INSERT INTO links(long, short, visits, ip) VALUES(@long, @short, 0, @ip);";
     command.Parameters.AddWithValue("@long", l);
     command.Parameters.AddWithValue("@short", s);
+    command.Parameters.AddWithValue("@ip", ip);
     command.ExecuteNonQuery();
   }
 
@@ -115,7 +116,7 @@ public class LinkController : ControllerBase
     });
 
     string shortened = GenerateRandomString(4, connection);
-    Insert(connection, cleaned, shortened);
+    Insert(connection, cleaned, shortened, ip);
     return Ok(shortened);
   }
 
