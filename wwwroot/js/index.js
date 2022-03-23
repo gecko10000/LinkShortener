@@ -6,11 +6,13 @@ form.submit(function (e) {
     url: "/set",
     data: form.serialize(),
     success: function(data) {
-      show(document.getElementById("button"));
+      show(document.getElementById("link-button"));
+      show(document.getElementById("stats-button"));
       var output = document.getElementById("shortened");
       show(output);
       link = "https://" + window.location.host + "/" + data;
       output.innerHTML = link;
+      document.getElementById("stats-link").href = link + "/stats";
       document.getElementById("forCopy").value = link;
       output.setAttribute("href", link);
     }
@@ -27,5 +29,4 @@ function copyToClipboard() {
   text.setSelectionRange(0, 99);
 
   navigator.clipboard.writeText(text.value);
-  console.log(text.value);
 }

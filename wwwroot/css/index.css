@@ -34,10 +34,16 @@ input {
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  width: 250px;
+  height: 75px;
   visibility: hidden;
 }
 
 .link-button:hover {
   border-color: white;
+}
+
+.stats-link {
+  color: white;
+  visibility: hidden;
 }

@@ -9,7 +9,13 @@
     <input type="submit" class="submit" value="Shorten">
   </form>
   <input type="text" id="forCopy" class="undercover"></input>
-  <button class="link-button" id="button" onclick="copyToClipboard()"><span id="shortened" style="text-decoration: underline;"></span><br><span style="font-size: 12px; color: #dddddd;">Click to copy</span></button>
+  <button class="link-button" id="link-button" onclick="copyToClipboard()">
+    <span id="shortened" style="text-decoration: underline;"></span><br>
+    <span style="font-size: 12px; color: #dddddd;">Click to copy</span>
+  </button><br><br>
+  <a href="test" target="_blank" id="stats-link">
+    <button class="link-button" id="stats-button"><span style="text-decoration: underline;">View Stats</span></button>
+  </a>
 </div>
 <script src="~/libs/jquery.js"></script>
 <script src="~/js/index.js"></script>
