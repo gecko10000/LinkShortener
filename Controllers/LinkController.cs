@@ -77,6 +77,8 @@ public class LinkController : ControllerBase
     return REGEX.Match(link).Groups[2].Value;
   }
 
+  private static HashSet<string> RateLimited = new HashSet<string>();
+
   [HttpPost("set")]
   public IActionResult Shorten([FromForm] string link)
   {
@@ -90,6 +92,17 @@ public class LinkController : ControllerBase
     {
       return Ok(existing);
     }
+
+    // rate limit creation of new ones
+    string ip = Request.Headers["CF-CONNECTING-IP"];
+    if (!RateLimited.Add(ip))
+    {
+      return BadRequest("Slow down!");
+    }
+    Task.Run(() => {
+      Thread.Sleep(1000 * 10);
+      RateLimited.Remove(ip);
+    });
 
     string shortened = GenerateRandomString(4, connection);
     Insert(connection, link, shortened);
