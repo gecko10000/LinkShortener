@@ -70,11 +70,17 @@ public class LinkController : ControllerBase
     command.ExecuteNonQuery();
   }
 
-  private static readonly Regex REGEX = new Regex(@"(https?:\/\/)?(\S+)", RegexOptions.Compiled);
+  private static readonly Regex REGEX = new Regex(@"(https?:\/\/)?([^\/\n]+)(\S*)", RegexOptions.Compiled);
 
-  private string CleanLink(string link)
+  private string? CleanLink(string link)
   {
-    return REGEX.Match(link).Groups[2].Value;
+    Match match = REGEX.Match(link);
+    if (!match.Success)
+    {
+      return null;
+    }
+    string afterDomain = match.Groups[3].Value;
+    return match.Groups[2].Value.ToLower() + (afterDomain.Equals("") ? "" : "/") + afterDomain;
   }
 
   private static HashSet<string> RateLimited = new HashSet<string>();
@@ -82,12 +88,16 @@ public class LinkController : ControllerBase
   [HttpPost("set")]
   public IActionResult Shorten([FromForm] string link)
   {
-    link = CleanLink(link);
+    string? cleaned = CleanLink(link);
+    if (cleaned is null)
+    {
+      return BadRequest("Malformed link.");
+    }
     using var connection = openConnection();
     using var command = new SQLiteCommand(connection);
 
     // Get existing first
-    string? existing = GetExistingShort(connection, link);
+    string? existing = GetExistingShort(connection, cleaned);
     if (existing is not null)
     {
       return Ok(existing);
@@ -105,7 +115,7 @@ public class LinkController : ControllerBase
     });
 
     string shortened = GenerateRandomString(4, connection);
-    Insert(connection, link, shortened);
+    Insert(connection, cleaned, shortened);
     return Ok(shortened);
   }
 
