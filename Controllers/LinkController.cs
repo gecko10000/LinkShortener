@@ -16,7 +16,7 @@ public class LinkController : ControllerBase
     var connection = new SQLiteConnection(@"URI=file:data/links.db");
     connection.Open();
     using var command = new SQLiteCommand(connection);
-    command.CommandText = @"CREATE TABLE IF NOT EXISTS links (long TEXT UNIQUE, short TEXT UNIQUE);";
+    command.CommandText = @"CREATE TABLE IF NOT EXISTS links (long TEXT UNIQUE, short TEXT UNIQUE, visits INT);";
     command.ExecuteNonQuery();
     return connection;
   }
@@ -45,10 +45,26 @@ public class LinkController : ControllerBase
     return command.ExecuteScalar() is not null;
   }
 
+  private void IncrementVisits(SQLiteConnection c, string s)
+  {
+    using var command = new SQLiteCommand(c);
+    command.CommandText = @"UPDATE links SET visits = visits + 1 WHERE short=@short;";
+    command.Parameters.AddWithValue("@short", s);
+    command.ExecuteNonQuery();
+  }
+
+  private int GetVisits(SQLiteConnection c, string s)
+  {
+    using var command = new SQLiteCommand(c);
+    command.CommandText = @"SELECT visits FROM links WHERE short=@short;";
+    command.Parameters.AddWithValue("@short", s);
+    return (int) command.ExecuteScalar();
+  }
+
   private void Insert(SQLiteConnection c, string l, string s)
   {
     using var command = new SQLiteCommand(c);
-    command.CommandText = @"INSERT INTO links(long, short) VALUES(@long, @short);";
+    command.CommandText = @"INSERT INTO links(long, short, visits) VALUES(@long, @short, 0);";
     command.Parameters.AddWithValue("@long", l);
     command.Parameters.AddWithValue("@short", s);
     command.ExecuteNonQuery();
@@ -108,6 +124,27 @@ public class LinkController : ControllerBase
   {
     using var connection = openConnection();
     string? l = GetExistingLong(connection, link);
-    return l is null ? BadRequest("This link does not exist.") : Redirect("http://" + l);
+    if (l is not null)
+    {
+      IncrementVisits(connection, link);
+    }
+    return l is null ? NonExistent() : Redirect("http://" + l);
   }
+
+  [HttpGet("{link}/stats")]
+  public IActionResult LinkStats(string link)
+  {
+    using var connection = openConnection();
+    string? l = GetExistingLong(connection, link);
+    return l is null ? NonExistent() : Ok(new {
+      visits = GetVisits(connection, link),
+      link = "http://" + l
+    });
+  }
+
+  private IActionResult NonExistent()
+  {
+    return BadRequest("This link does not exist.");
+  }
+
 }
