@@ -80,8 +80,7 @@ public class LinkController : ControllerBase
     {
       return null;
     }
-    string afterDomain = match.Groups[3].Value;
-    return match.Groups[2].Value.ToLower() + (afterDomain.Equals("") ? "" : "/") + afterDomain;
+    return match.Groups[2].Value.ToLower() + match.Groups[3].Value;
   }
 
   private static HashSet<string> RateLimited = new HashSet<string>();
